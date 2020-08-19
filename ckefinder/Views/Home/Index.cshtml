@@ -1,0 +1,51 @@
+﻿@(Html.Kendo().FileManager()
+    .Name("filemanager")
+    .DataSource(ds =>
+        {
+            ds.Read(operation => operation
+            .Type(HttpVerbs.Post)
+            .Action("Read", "FileManagerData")
+        );
+            ds.Destroy(operation => operation
+                .Type(HttpVerbs.Post)
+                .Action("Destroy", "FileManagerData")
+            );
+            ds.Create(operation => operation
+                .Type(HttpVerbs.Post)
+                .Action("Create", "FileManagerData")
+            );
+            ds.Update(operation => operation
+                .Type(HttpVerbs.Post)
+                .Action("Update", "FileManagerData")
+            );
+        })
+    .UploadUrl("Upload", "FileManagerData")
+    .Events(events => events
+        .Open("onOpen")
+    )
+)
+
+<script>
+    // Helper function to get parameters from the query string.
+    function getUrlParam(paramName) {
+        var reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
+        var match = window.location.search.match(reParam);
+
+        return (match && match.length > 1) ? match[1] : null;
+    }
+    // Simulate user action of selecting a file to be returned to CKEditor.
+    function returnFileUrl(filePath) {
+        var funcNum = getUrlParam('CKEditorFuncNum');
+        window.opener.CKEDITOR.tools.callFunction(funcNum, filePath);
+        window.close();
+    }
+
+    function onOpen(e) {
+        if (e.entry.extension == ".png" || e.entry.extension == ".jpg") {
+            var filePath = window.location.origin + window.location.pathname + "/Content/UserFiles/Folders/" + e.entry.path
+            returnFileUrl(filePath);
+            //$("#imagePreview").attr("src", "../content/UserFiles/Folders/" + e.entry.path)
+            //$("#window").data("kendoWindow").center().open();
+        }
+    }
+</script>
