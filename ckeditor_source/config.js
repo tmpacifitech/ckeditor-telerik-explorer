@@ -73,6 +73,8 @@ CKEDITOR.editorConfig = function( config ) {
 		'uploadimage,' +
 		'wysiwygarea';
 	// %REMOVE_END%
+
+	config.uploadUrl = '/ImageLibrary/FileManagerData/Upload2';
 };
 
 // %LEAVE_UNMINIFIED% %REMOVE_LINE%

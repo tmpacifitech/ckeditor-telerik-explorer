@@ -4,15 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <script src="/ckeditor/ckeditor.js" type="text/javascript"></script>
+  <script src="/ckeditor_source/ckeditor.js" type="text/javascript"></script>
 </head>
 <body>
   <textarea name="editor" id="editor" rows="10"></textarea>
   <script>
     var editor = CKEDITOR.replace('editor', {
       height: 500,
-      filebrowserImageBrowseUrl: '/ImageLibrary',
-      filebrowserImageUploadUrl: '/ImageLibrary/connector?command=QuickUpload&type=Images',
+      filebrowserImageBrowseUrl: '/ImageLibrary'
     });
   </script>
 </body>
