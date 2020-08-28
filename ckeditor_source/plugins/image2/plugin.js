@@ -1344,15 +1344,31 @@
 
 				if ( updateData ) {
 					widget.setData( updateData );
+
+					var fileNameSegments = widget.data.src.split('/');
+					var filename = fileNameSegments[fileNameSegments.length - 1];
+
+					var rawImagePath;
+					if (widget.data.src.startsWith('/ImageLibrary')) {
+						rawImagePath = widget.data.src;
+					} else {
+						rawImagePath = '/' + fileNameSegments.slice(3).join('/');
+					}
+
+					var subpath = widget.data.src
+						.substring(widget.data.src.indexOf('/Content/UserFiles/Folders/'))
+						.replace('/Content/UserFiles/Folders/', '')
+						.replace(filename, '');
+
+					if (subpath === '/') {
+						subpath = '';
+					}
+
+					rawImagePath = btoa(rawImagePath) + '.' + widget.data.src.split('.').pop();
+
 					var img = new Image();
-					img.src = widget.data.src;
+					img.src = '/ImageLibrary/Content/UserFiles/Backups/' + rawImagePath;
 
-					var fileNameParam = widget.data.src.match(/fileName=([^&]*)/)[0];
-					var filename = fileNameParam.replace('fileName=', '');
-
-					var urlSegs = widget.data.src.split('/');
-					var uploadUrl = urlSegs[0] + '//' + urlSegs[2] + "/ckfinder/connector?command=QuickUpload&type=Images&responseType=json"
-					
 					img.onload = function () {
 						var elem = document.createElement('canvas');
 						elem.width = updateData.width;
@@ -1373,9 +1389,13 @@
 
 								// Don't update data twice or more.
 								updateData = false;
+
+								widget.init();
 							} );
 
-							loader.loadAndUpload( uploadUrl );
+							loader.loadAndUpload( editor.config.resizingUploadUrl, {
+								path: subpath
+							} );
 						});
 					}
 				}

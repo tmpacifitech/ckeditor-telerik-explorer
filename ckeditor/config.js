@@ -9,6 +9,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.uiColor = '#AADC6E';
 
 	config.extraPlugins = 'image2';
-	config.uploadUrl = '/ImageLibrary/FileManagerData/Upload2';
+	config.uploadUrl = '/ImageLibrary/FileManagerData/UploadExternal';
+	config.resizingUploadUrl = '/ImageLibrary/FileManagerData/UploadResizing';
 };
 
