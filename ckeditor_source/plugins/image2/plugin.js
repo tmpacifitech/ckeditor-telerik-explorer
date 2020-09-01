@@ -343,6 +343,91 @@
 						this.parts.link = this.parts.image.getParent();
 				}
 
+				// if (editor.getSelection()) {
+				// 	var parentElement = editor.getSelection().getStartElement();
+				//
+				// 	var availableTags = ['DIV', 'TD', 'P', 'SECTION', 'TBODY', 'UL', 'LI', 'BODY', 'HTML'];
+				// 	while (true) {
+				// 		if (!parentElement.$) {
+				// 			break;
+				// 		}
+				// 		var index = availableTags.findIndex(function (tag) {
+				// 			return tag === parentElement.$.tagName.toUpperCase();
+				// 		});
+				// 		if (index >= 0) {
+				// 			break;
+				// 		}
+				// 		parentElement = parentElement.getParent();
+				// 	}
+				//
+				// 	if (parentElement && parentElement.getSize('width')) {
+				// 		var widget = this;
+				// 		var image = new Image();
+				// 		image.src = widget.data.src;
+				//
+				// 		var elem = document.createElement('canvas');
+				// 		elem.width = parentElement.getSize('width');
+				// 		elem.height = elem.width * widget.data.height / widget.data.width;
+				//
+				// 		this.data.width = elem.width;
+				// 		this.data.height = elem.height;
+				//
+				// 		image.onload = function () {
+				//
+				// 			var context = elem.getContext('2d');
+				// 			context.drawImage(image, 0, 0, image.width, image.height, 0, 0, elem.width, elem.height);
+				//
+				// 			var filePathSegments = widget.data.src.split('/');
+				// 			var filename = filePathSegments[filePathSegments.length - 1];
+				// 			context.canvas.toBlob(function(blob) {
+				// 				var file = new File([blob], filename, {
+				// 					type: blob.type,
+				// 					lastModified: Date.now()
+				// 				});
+				//
+				// 				var loader = editor.uploadRepository.create( file );
+				//
+				// 				loader.on( 'uploaded', function( ) {
+				// 					editor.fire( 'saveSnapshot' );
+				//
+				// 					widget.parts.image.setAttributes( {
+				// 						src: widget.data.src,
+				//
+				// 						// This internal is required by the editor.
+				// 						'data-cke-saved-src': widget.data.src,
+				//
+				// 						alt: widget.data.alt
+				// 					} );
+				//
+				// 					// If shifting non-captioned -> captioned, remove classes
+				// 					// related to styles from <img/>.
+				// 					if ( widget.oldData && !widget.oldData.hasCaption && widget.data.hasCaption ) {
+				// 						for ( var c in widget.data.classes )
+				// 						widget.parts.image.removeClass( c );
+				// 					}
+				//
+				// 					// Set dimensions of the image according to gathered data.
+				// 					// Do it only when the attributes are allowed (https://dev.ckeditor.com/ticket/11004).
+				// 					if ( editor.filter.checkFeature( features.dimension ) )
+				// 						setDimensions( widget );
+				//
+				// 					// Cache current data.
+				// 					widget.oldData = CKEDITOR.tools.extend( {}, widget.data );
+				//
+				// 				} );
+				//
+				// 				var subpath = widget.data.src
+				// 					.substring(widget.data.src.indexOf('/Content/UserFiles/Folders/'))
+				// 					.replace('/Content/UserFiles/Folders/', '')
+				// 					.replace(filename, '');
+				//
+				// 				loader.loadAndUpload( editor.config.resizingUploadUrl, {
+				// 					path: subpath
+				// 				} );
+				// 			});
+				// 		};
+				// 	}
+				// } else {
 				this.parts.image.setAttributes( {
 					src: this.data.src,
 
@@ -366,6 +451,7 @@
 
 				// Cache current data.
 				this.oldData = CKEDITOR.tools.extend( {}, this.data );
+				// }
 			},
 
 			init: function() {

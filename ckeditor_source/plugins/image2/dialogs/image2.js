@@ -146,6 +146,31 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 				if ( !image )
 					return toggleLockRatio( false );
 
+				if (editor.getSelection()) {
+					var parentElement = editor.getSelection().getStartElement();
+
+					var availableTags = ['DIV', 'TD', 'P', 'SECTION', 'TBODY', 'UL', 'LI', 'BODY', 'HTML'];
+					while (true) {
+						if (!parentElement.$) {
+							break;
+						}
+						var index = availableTags.findIndex(function (tag) {
+							return tag === parentElement.$.tagName.toUpperCase();
+						});
+						if (index >= 0) {
+							break;
+						}
+						parentElement = parentElement.getParent();
+					}
+
+					if (parentElement && parentElement.getSize('width')) {
+						var newWidth = parseInt(parentElement.getSize('width'));
+						var newHeight = parseInt(newWidth * height / width);
+						width = newWidth;
+						height = newHeight;
+					}
+				}
+
 				// Fill width field with the width of the new image.
 				widthField.setValue( editor.config.image2_prefillDimensions === false ? 0 : width );
 
