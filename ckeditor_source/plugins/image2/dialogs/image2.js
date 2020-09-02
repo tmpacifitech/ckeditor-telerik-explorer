@@ -146,31 +146,6 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 				if ( !image )
 					return toggleLockRatio( false );
 
-				if (editor.getSelection()) {
-					var parentElement = editor.getSelection().getStartElement();
-
-					var availableTags = ['DIV', 'TD', 'P', 'SECTION', 'TBODY', 'UL', 'LI', 'BODY', 'HTML'];
-					while (true) {
-						if (!parentElement.$) {
-							break;
-						}
-						var index = availableTags.findIndex(function (tag) {
-							return tag === parentElement.$.tagName.toUpperCase();
-						});
-						if (index >= 0) {
-							break;
-						}
-						parentElement = parentElement.getParent();
-					}
-
-					if (parentElement && parentElement.getSize('width')) {
-						var newWidth = parseInt(parentElement.getSize('width'));
-						var newHeight = parseInt(newWidth * height / width);
-						width = newWidth;
-						height = newHeight;
-					}
-				}
-
 				// Fill width field with the width of the new image.
 				widthField.setValue( editor.config.image2_prefillDimensions === false ? 0 : width );
 
@@ -379,7 +354,70 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 					this.setValue( widget.data.src );
 				},
 				commit: function( widget ) {
-					widget.setData( 'src', this.getValue() );
+					if (editor.getSelection()) {
+						var parentElement = editor.getSelection().getStartElement();
+						var availableTags = ['DIV', 'TD', 'P', 'SECTION', 'TBODY', 'UL', 'LI', 'BODY', 'HTML'];
+						while (true) {
+							if (!parentElement.$) {
+								break;
+							}
+							var index = availableTags.findIndex(function (tag) {
+								return tag === parentElement.$.tagName.toUpperCase();
+							});
+							if (index >= 0) {
+								break;
+							}
+							parentElement = parentElement.getParent();
+						}
+
+						if (parentElement && parentElement.getSize('width')) {
+							var image = new Image();
+							image.src = this.getValue();
+					
+							image.onload = function () {
+								var canvas = document.createElement('canvas');
+								canvas.width = parentElement.getSize('width');
+								canvas.height = canvas.width * image.height / image.width;
+
+								widget.setData('width', canvas.width);
+								widget.setData('height', canvas.height);
+					
+								var context = canvas.getContext('2d');
+								context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
+					
+								var filePathSegments = image.src.split('/');
+								var filename = filePathSegments[filePathSegments.length - 1];
+								context.canvas.toBlob(function(blob) {
+									var file = new File([blob], filename, {
+										type: blob.type,
+										lastModified: Date.now()
+									});
+					
+									var loader = editor.uploadRepository.create( file );
+					
+									loader.on( 'uploaded', function( ) {
+										editor.fire( 'saveSnapshot' );
+										widget.setData( 'src', image.src );
+									} );
+					
+									var subpath = image.src
+										.substring(image.src.indexOf('/Content/UserFiles/Folders/'))
+										.replace('/Content/UserFiles/Folders/', '')
+										.replace(filename, '');
+
+									if (subpath === '/') {
+										subpath = '';
+									}
+					
+									loader.loadAndUpload( editor.config.resizingUploadUrl, {
+										path: subpath
+									} );
+								});
+							};
+						}
+					} else {
+						widget.setData( 'src', this.getValue() );
+					}
 				},
 				validate: CKEDITOR.dialog.validate.notEmpty( lang.urlMissing )
 			}
