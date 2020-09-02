@@ -371,8 +371,20 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 						}
 
 						if (parentElement && parentElement.getSize('width')) {
+							var imageSrc = this.getValue();
+							var fileNameSegments = imageSrc.split('/');
+							var filename = fileNameSegments[fileNameSegments.length - 1];
+
+							var rawImagePath;
+							if (imageSrc.startsWith('/ImageLibrary')) {
+								rawImagePath = imageSrc;
+							} else {
+								rawImagePath = '/' + fileNameSegments.slice(3).join('/');
+							}
+							rawImagePath = btoa(rawImagePath) + '.' + imageSrc.split('.').pop();
+
 							var image = new Image();
-							image.src = this.getValue();
+							image.src = '/ImageLibrary/Content/UserFiles/Backups/' + rawImagePath;
 					
 							image.onload = function () {
 								var canvas = document.createElement('canvas');
@@ -385,8 +397,6 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 								var context = canvas.getContext('2d');
 								context.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
 					
-								var filePathSegments = image.src.split('/');
-								var filename = filePathSegments[filePathSegments.length - 1];
 								context.canvas.toBlob(function(blob) {
 									var file = new File([blob], filename, {
 										type: blob.type,
@@ -397,11 +407,11 @@ CKEDITOR.dialog.add( 'image2', function( editor ) {
 					
 									loader.on( 'uploaded', function( ) {
 										editor.fire( 'saveSnapshot' );
-										widget.setData( 'src', image.src );
+										widget.setData( 'src', imageSrc );
 									} );
 					
-									var subpath = image.src
-										.substring(image.src.indexOf('/Content/UserFiles/Folders/'))
+									var subpath = imageSrc
+										.substring(imageSrc.indexOf('/Content/UserFiles/Folders/'))
 										.replace('/Content/UserFiles/Folders/', '')
 										.replace(filename, '');
 

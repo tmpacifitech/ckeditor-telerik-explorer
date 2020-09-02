@@ -8,7 +8,6 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 
-	config.extraPlugins = 'image2';
 	config.uploadUrl = '/ImageLibrary/FileManagerData/UploadExternal';
 	config.resizingUploadUrl = '/ImageLibrary/FileManagerData/UploadResizing';
 };
